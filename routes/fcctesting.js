@@ -30,6 +30,7 @@
 var cors = require('cors');
 var fs = require('fs');
 var runner = require('../test-runner');
+var execSync = require("child_process").execSync;
 
 module.exports = function (app) {
 
@@ -79,6 +80,15 @@ module.exports = function (app) {
     hs.forEach(h => {hObj[h] = res._headers[h]});
     delete res._headers['strict-transport-security'];
     res.json({headers: hObj});
+  });
+  app.get("/_api/user-email", function (req, res) {
+    var email = "";
+    try {
+      email = execSync("git config --get user.email", { encoding: "utf8" }).trim();
+    } catch (e) {
+      email = "";
+    }
+    res.json({ email: email });
   });
   
 };
